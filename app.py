@@ -1,20 +1,12 @@
 import controller
 from tkinter import *
 import customtkinter as ctk
+from ttkwidgets.autocomplete import AutocompleteEntry
+from PIL import Image
 
-champion_name = "Akshan"
-number_of_matches = 20
-depth = int(number_of_matches / 20) 
 
-champion_ids = controller.load_json('champion_ids.json')
-item_ids = controller.load_json('item_ids.json')
-
-matches = controller.get_matches(depth=depth, champion_id=int(champion_ids[champion_name]))
-top_items = controller.get_items_count(matches=matches, items_dict=item_ids)
-
-print(f"Best items for: {champion_name}")
-for item in list(top_items.keys())[:6]:
-    print("- "+item)
+CHAMPION_IDS = controller.load_json('champion_ids.json')
+ITEMS_IDS = controller.load_json('item_ids.json')
 	
 
 class App(ctk.CTk):
@@ -22,11 +14,45 @@ class App(ctk.CTk):
         super().__init__()
 
         self.title("Best Build Finder")
-        self.geometry(f"{1100}x{580}")
+        self.geometry(f"{400}x{500}")
+        self.resizable(False, False)
 
+        self.bind('<Return>', self.get_build)
         
+        self.grid_columnconfigure(0, weight=1)
 
+        self.champion_name = None
+        self.matches_number = None
+        self.depth = 1
 
+        # FRAMES
+        self.search_frame = ctk.CTkFrame(self, corner_radius=0)
+        self.search_frame.grid(row=0, column=0, sticky='ew')
+
+        self.build_frame = ctk.CTkFrame(self, corner_radius=0)
+        self.build_frame.grid(row=1, column=0, sticky='ew')
+
+        # SEARCH FRAME WIDGETS
+        self.champion_name_entry = AutocompleteEntry(self.search_frame, width = 15, font = ('Open Sans', 16), completevalues=CHAMPION_IDS.keys())
+        self.champion_name_entry.grid(row=0, column=0, padx=15, pady=20, sticky = "ew")
+        
+        self.get_build_button =  ctk.CTkButton(self.search_frame, text = "Get Build", font = ('Open Sans', 20), command = self.get_build)
+        self.get_build_button.grid(row=0, column=1, padx=15, pady=20, sticky = "ew")
+
+    def get_build(self):
+        self.champion_name = self.champion_name_entry.get()
+
+        matches = controller.get_matches(depth=self.depth, champion_id=int(CHAMPION_IDS[self.champion_name]))
+        top_items = controller.get_items_count(matches=matches, items_dict=ITEMS_IDS)
+        
+        champion_image = controller.get_champion_image(self.champion_name)
+
+        self.buttom_image = ctk.CTkButton(self.build_frame, state=DISABLED, text="", fg_color = 'transparent', image=champion_image)
+        self.buttom_image.grid(row=0, column=0)
+
+        print(f"Best items for : {self.champion_name}")
+        for item in list(top_items.keys())[:6]:
+            print("- "+item)
 
 if __name__ == "__main__":
     ctk.set_appearance_mode("Dark")

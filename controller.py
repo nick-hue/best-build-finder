@@ -2,6 +2,10 @@ import requests
 from bs4 import BeautifulSoup
 from collections import Counter
 import json 
+import urllib.request
+from PIL import ImageTk, Image
+import customtkinter as ctk
+import io
 
 def get_matches(depth, champion_id):
     matches = []
@@ -148,6 +152,27 @@ def get_champion_ids_json():
 
     with open("champion_ids.json", "w") as outfile: 
         json.dump(sorted_dict, outfile)
+
+def get_champion_image(champion_id):
+    print(f"Champ id: {champion_id}")
+    url = f"https://static.bigbrain.gg/assets/lol/riot_static/14.1/img/champion/{champion_id.lower()}.png"
+
+    try:
+        with urllib.request.urlopen(url) as u:
+            raw_data = u.read()
+    except Exception as e:
+        print(f"Error fetching image: {e}")
+        return None
+
+    try:
+        image = Image.open(io.BytesIO(raw_data))
+    except Exception as e:
+        print(f"Error opening image: {e}")
+        return None
+
+    img = ctk.CTkImage(light_image=image, dark_image=image, size=((250, 282)))
+
+    return img
 
 def load_json(json_filename):
     with open(json_filename) as json_file:

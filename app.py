@@ -1,7 +1,7 @@
 import controller
 import json
 
-champion_name = "Mordekaiser"
+champion_name = "Akshan"
 number_of_matches = 20
 depth = int(number_of_matches / 20) 
 

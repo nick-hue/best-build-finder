@@ -148,3 +148,9 @@ def get_champion_ids_json():
 
     with open("champion_ids.json", "w") as outfile: 
         json.dump(sorted_dict, outfile)
+
+def load_json(json_filename):
+    with open(json_filename) as json_file:
+        data = json.load(json_file)
+
+    return data

@@ -1,0 +1,7 @@
+requests
+bs4
+tkinter
+customtkinter
+Pillow
+urllib
+ttkwidgets

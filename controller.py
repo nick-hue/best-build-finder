@@ -153,9 +153,10 @@ def get_champion_ids_json():
     with open("champion_ids.json", "w") as outfile: 
         json.dump(sorted_dict, outfile)
 
-def get_champion_image(champion_id):
-    print(f"Champ id: {champion_id}")
-    url = f"https://static.bigbrain.gg/assets/lol/riot_static/14.1/img/champion/{champion_id.lower()}.png"
+def get_champion_image(champion_name):
+    print(f"Champ id: {champion_name}")
+    highfen = "'"
+    url = f"https://cdn.lolrift.com/img/champion/tiles/{champion_name.replace(' ', '').replace(highfen, '')}_0.webp"
 
     try:
         with urllib.request.urlopen(url) as u:
@@ -170,7 +171,7 @@ def get_champion_image(champion_id):
         print(f"Error opening image: {e}")
         return None
 
-    img = ctk.CTkImage(light_image=image, dark_image=image, size=((250, 282)))
+    img = ctk.CTkImage(light_image=image, dark_image=image, size=((188, 212)))
 
     return img
 

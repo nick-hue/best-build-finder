@@ -4,6 +4,8 @@ import customtkinter as ctk
 from ttkwidgets.autocomplete import AutocompleteEntry
 from PIL import Image
 
+# 
+
 
 CHAMPION_IDS = controller.load_json('champion_ids.json')
 ITEMS_IDS = controller.load_json('item_ids.json')

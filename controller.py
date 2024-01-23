@@ -124,34 +124,33 @@ def get_champion_ids():
     return sorted_dict
 
 def get_champion_ids_json():
-    with open("id_data.txt", "r") as f:
+    with open('id_data.txt', 'r') as f:
         data = f.readlines()
 
     my_dict = {}
 
-    for item in data:
-        info = item.split(" ")
-        # print(info)
-        if len(info) > 5:
-            _, current_id, _, name, name2, _ = item.split(" ")
-            final_name = name.replace('"', "").replace(";","") + " " + name2.replace('"', "").replace(";","")
+    for line in data:
+        line_info = line.strip().replace("\t", " ").split(" ")
+        print("len=",len(line_info))
+        id = line_info[0]
+        
+        data_length = len(line_info)
 
-        else:
-            _, current_id, _, name, _ = item.split(" ")
-            final_name = name.replace('"', "").replace(";","")
+        if 4 < data_length < 8 :
+            name = line_info[1] + " " + line_info[2]
+        elif data_length == 8:
+            name = line_info[1] + " " + line_info[2] + " " + line_info[3]
+        else: 
+            name = line_info[1]
 
-        final_id = current_id.replace(":", "")
+        # print(f"ID: {id}, Name: {name}")
 
-        #print(f"ID: {final_id:>4}| Name: {final_name}")
+        my_dict[name] = id
 
-        my_dict[final_name] = final_id
-
-    myKeys = list(my_dict.keys())
-    myKeys.sort()
-    sorted_dict = {i: my_dict[i] for i in myKeys}
+    # print(my_dict)
 
     with open("champion_ids.json", "w") as outfile: 
-        json.dump(sorted_dict, outfile)
+        json.dump(my_dict, outfile)
 
 def get_champion_image(champion_name):
     print(f"Champ id: {champion_name}")

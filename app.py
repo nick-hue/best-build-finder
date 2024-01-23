@@ -2,12 +2,10 @@ import controller
 from tkinter import *
 import customtkinter as ctk
 from ttkwidgets.autocomplete import AutocompleteEntry
-from PIL import Image
 
 CHAMPION_IDS = controller.load_json('champion_ids.json')
 ITEMS_IDS = controller.load_json('item_ids.json')
 	
-
 class App(ctk.CTk):
     def __init__(self):
         super().__init__()
@@ -29,13 +27,13 @@ class App(ctk.CTk):
         self.search_frame.grid(row=0, column=0, sticky='ew', columnspan = 2)
 
         self.champion_frame = ctk.CTkFrame(self, corner_radius=0)
-        self.champion_frame.grid(row=1, column=0, sticky='ew')
+        self.champion_frame.grid(row=1, column=0, sticky='nsew')
 
         self.build_frame = ctk.CTkFrame(self, corner_radius=0)
         self.build_frame.grid(row=1, column=1, sticky='nsew')
 
         self.build_label_frame = ctk.CTkFrame(self, corner_radius=0)
-        self.build_label_frame.grid(row=2, column=0, sticky='ew', columnspan = 2)
+        self.build_label_frame.grid(row=2, column=0, sticky='nsew', columnspan = 2)
 
         # SEARCH FRAME WIDGETS
         self.champion_name_entry = AutocompleteEntry(self.search_frame, width = 15, font = ('Open Sans', 16), completevalues=CHAMPION_IDS.keys())
@@ -49,8 +47,6 @@ class App(ctk.CTk):
         self.search_depth.set("20")
 
 
-
-        
     def get_build(self, *args):
         self.clear_frame(self.champion_frame)
         self.clear_frame(self.build_frame)

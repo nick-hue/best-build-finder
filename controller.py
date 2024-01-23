@@ -47,22 +47,6 @@ def get_matches(depth, champion_id):
 
     return matches
 
-def get_item_ids():
-    response = requests.get("https://darkintaqt.com/blog/item-ids")
-    soup = BeautifulSoup(response.content, 'html.parser')
-
-    table = soup.find('div', class_ = 'table')
-    items = table.find_all('td')
-
-    items_dict = {}
-    for i in range(0, len(items), 3):
-        if len(items[i].text) > 4:
-            items_dict[int(items[i].text[2:])] = items[i+2].text
-        else:
-            items_dict[int(items[i].text)] = items[i+2].text
-
-    return items_dict
-
 def get_item_ids_to_json():
     response = requests.get("https://darkintaqt.com/blog/item-ids")
     soup = BeautifulSoup(response.content, 'html.parser')
@@ -93,35 +77,6 @@ def get_items_count(matches, items_dict):
             
     count = dict(Counter(all_items))
     return {k: v for k, v in sorted(count.items(), key=lambda item: item[1], reverse=True)}
-
-def get_champion_ids():
-    with open("id_data.txt", "r") as f:
-        data = f.readlines()
-
-    my_dict = {}
-
-    for item in data:
-        info = item.split(" ")
-        # print(info)
-        if len(info) > 5:
-            _, current_id, _, name, name2, _ = item.split(" ")
-            final_name = name.replace('"', "").replace(";","") + " " + name2.replace('"', "").replace(";","")
-
-        else:
-            _, current_id, _, name, _ = item.split(" ")
-            final_name = name.replace('"', "").replace(";","")
-
-        final_id = current_id.replace(":", "")
-
-        #print(f"ID: {final_id:>4}| Name: {final_name}")
-
-        my_dict[final_name] = final_id
-
-    myKeys = list(my_dict.keys())
-    myKeys.sort()
-    sorted_dict = {i: my_dict[i] for i in myKeys}
-
-    return sorted_dict
 
 def get_champion_ids_json():
     with open('id_data.txt', 'r') as f:
@@ -173,6 +128,58 @@ def get_champion_image(champion_name):
     img = ctk.CTkImage(light_image=image, dark_image=image, size=((188, 212)))
 
     return img
+
+def get_concat_h(im1, im2):
+    dst = Image.new('RGB', (im1.width + im2.width, im1.height))
+    dst.paste(im1, (0, 0))
+    dst.paste(im2, (im1.width, 0))
+    return dst
+
+def get_concat_v(im1, im2):
+    dst = Image.new('RGB', (im1.width, im1.height + im2.height))
+    dst.paste(im1, (0, 0))
+    dst.paste(im2, (0, im1.height))
+    return dst
+
+def get_build_image(items, ITEMS_IDS):
+    images = []
+    for item in list(items.keys())[:6]:
+        
+        id = list(ITEMS_IDS.keys())[list(ITEMS_IDS.values()).index(item)]
+
+        url = f"https://cdn.darkintaqt.com/lol/c-assets/items/{id}.png.webp"
+        
+        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'}
+        req = urllib.request.Request(url=url, headers=headers)
+
+        try:
+            with urllib.request.urlopen(req) as u:
+                raw_data = u.read()
+        except Exception as e:
+            print(f"Error fetching image: {e}")
+            return None
+
+        try:
+            image = Image.open(io.BytesIO(raw_data))
+        except Exception as e:
+            print(f"Error opening image: {e}")
+            return None
+        
+        images.append(image)
+
+    tmp1 = get_concat_h(images[0], images[1])
+    tmp1 = get_concat_h(tmp1, images[2])
+    #tmp1.show()
+
+    tmp2 = get_concat_h(images[3], images[4])
+    tmp2 = get_concat_h(tmp2, images[5])
+    #tmp2.show()
+
+    tmp_result = get_concat_v(tmp1, tmp2)
+    
+    result = ctk.CTkImage(light_image=tmp_result, dark_image=tmp_result, size=((200, 150)))
+
+    return result
 
 def load_json(json_filename):
     with open(json_filename) as json_file:

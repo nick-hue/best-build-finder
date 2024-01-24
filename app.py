@@ -71,7 +71,7 @@ class App(ctk.CTk):
 
         ctk.CTkLabel(self.build_label_frame, text = f"Best items for : {self.champion_name}", font=('Open Sans', 20, 'bold'), justify = 'left').grid(row = 0, column=0, columnspan=2, padx = 5, pady = 5, sticky = "w")
         
-        for idx, item in enumerate(list(top_items.keys())[:6]):
+        for idx, item in enumerate(list(top_items.keys())[:8]):
             ctk.CTkLabel(self.build_label_frame, text = f"- {item}", font=('Open Sans', 18, 'bold'), justify = 'left').grid(row = idx+1, column=0, columnspan=2, padx = 5, pady = 1, sticky = "w")
 
     def set_depth(self, choice):

@@ -82,7 +82,7 @@ def get_items_count(matches, items_dict):
         #print()
             
     #print(all_items)
-    remove_list = ["Berserker's Greaves", "Boots of Swiftness Boots of Swiftness", "Ionian Boots of Lucidity", "Mercury's Treads", \
+    remove_list = ["Berserker's Greaves", "Boots of Swiftness", "Ionian Boots of Lucidity", "Mercury's Treads", \
                    "Mobility Boots", "Plated Steelcaps", "Sorcerer's Shoes"]
     result = [i for i in all_items if i not in remove_list]
     #print(result)
@@ -154,7 +154,7 @@ def get_concat_v(im1, im2):
 
 def get_build_image(items, ITEMS_IDS):
     images = []
-    for item in list(items.keys())[:6]:
+    for item in list(items.keys())[:8]:
         
         id = list(ITEMS_IDS.keys())[list(ITEMS_IDS.values()).index(item)]
 
@@ -180,15 +180,17 @@ def get_build_image(items, ITEMS_IDS):
 
     tmp1 = get_concat_h(images[0], images[1])
     tmp1 = get_concat_h(tmp1, images[2])
+    tmp1 = get_concat_h(tmp1, images[3])
     #tmp1.show()
 
-    tmp2 = get_concat_h(images[3], images[4])
-    tmp2 = get_concat_h(tmp2, images[5])
+    tmp2 = get_concat_h(images[4], images[5])
+    tmp2 = get_concat_h(tmp2, images[6])
+    tmp2 = get_concat_h(tmp2, images[7])
     #tmp2.show()
 
     tmp_result = get_concat_v(tmp1, tmp2)
     
-    result = ctk.CTkImage(light_image=tmp_result, dark_image=tmp_result, size=((200, 150)))
+    result = ctk.CTkImage(light_image=tmp_result, dark_image=tmp_result, size=((250, 175)))
 
     return result
 

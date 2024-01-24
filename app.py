@@ -42,7 +42,7 @@ class App(ctk.CTk):
         self.get_build_button =  ctk.CTkButton(self.search_frame, text = "Get Build", font = ('Open Sans', 20), command = self.get_build)
         self.get_build_button.grid(row=0, column=1, padx=15, pady=20, sticky = "ew")
 
-        self.search_depth = ctk.CTkComboBox(self.search_frame, values=["20", "40", "60", "80", "100"], width = 75, state = "readonly", command=self.combobox_callback)
+        self.search_depth = ctk.CTkComboBox(self.search_frame, values=["20", "40", "60", "80", "100"], width = 75, state = "readonly", command=self.set_depth)
         self.search_depth.grid(row=0, column=2, padx=15, pady=20, sticky = "ew")
         self.search_depth.set("20")
 
@@ -55,6 +55,10 @@ class App(ctk.CTk):
         self.champion_name = self.champion_name_entry.get()
 
         matches = controller.get_matches(depth=self.depth, champion_id=int(CHAMPION_IDS[self.champion_name]))
+
+        if not matches:
+            ctk.CTkLabel(self.champion_frame, text = f"No recent matches for : {self.champion_name}", text_color = "red", font=('Open Sans', 26, 'bold'), justify = 'left').grid(row = 0, column=0, columnspan=2, padx = 5, pady = 5, sticky = "w")
+
         top_items = controller.get_items_count(matches=matches, items_dict=ITEMS_IDS)
 
         champion_image = controller.get_champion_image(self.champion_name)
@@ -70,7 +74,7 @@ class App(ctk.CTk):
         for idx, item in enumerate(list(top_items.keys())[:6]):
             ctk.CTkLabel(self.build_label_frame, text = f"- {item}", font=('Open Sans', 18, 'bold'), justify = 'left').grid(row = idx+1, column=0, columnspan=2, padx = 5, pady = 1, sticky = "w")
 
-    def combobox_callback(self, choice):
+    def set_depth(self, choice):
         self.depth = int(int(choice) / 20)
 
     def clear_frame(self, frame):

@@ -40,10 +40,16 @@ def get_matches(depth, champion_id):
             'query': 'query ChampionMatchList($championId: Int, $league: String, $recommendedFirst: Boolean, $role: String, $victoryOnly: Boolean, $opponentChampionId: Int, $leagueBlocklist: [String], $teamBlocklist: [String], $proBlocklist: [String], $pageNumber: Int, $isWorlds: Boolean, $isOtp: Boolean, $proTeam: String) {\n  getProChampionMatchList(\n    championId: $championId\n    league: $league\n    recommendedFirst: $recommendedFirst\n    role: $role\n    victoryOnly: $victoryOnly\n    opponentChampionId: $opponentChampionId\n    leagueBlocklist: $leagueBlocklist\n    teamBlocklist: $teamBlocklist\n    proBlocklist: $proBlocklist\n    pageNumber: $pageNumber\n    isWorlds: $isWorlds\n    isOtp: $isOtp\n    proTeam: $proTeam\n  ) {\n    matchList {\n      calculatedRole\n      championId\n      cs\n      completedItems\n      currentTeam\n      finalBuild\n      gold\n      itemPath {\n        itemId\n        timestamp\n        type\n        __typename\n      }\n      jungleCs\n      killParticipation\n      matchDuration\n      matchId\n      isWorlds\n      matchTimestamp\n      normalizedName\n      proInfo {\n        league\n        mainRole\n        currentTeam\n        officialName\n        tags\n        region\n        __typename\n      }\n      opponentChampionId\n      proLeague\n      regionId\n      runes {\n        perk0\n        perk1\n        perk2\n        perk3\n        perk4\n        perk5\n        primaryStyle\n        subStyle\n        __typename\n      }\n      riotUserName\n      riotTagLine\n      statShards\n      seasonId\n      skillEvolveOrders\n      skillOrders\n      summonerSpells\n      teamId\n      totalAssists\n      totalDeaths\n      totalKills\n      version\n      win\n      __typename\n    }\n    mostPopularItems {\n      itemId\n      pickRate\n      __typename\n    }\n    mostPopularBoots {\n      itemId\n      pickRate\n      __typename\n    }\n    __typename\n  }\n}',
         }
 
-        response = requests.post('https://u.gg/api', headers=headers, json=json_data).json()
-        current_matches = response['data']['getProChampionMatchList']['matchList']
-        for match in current_matches:
-            matches.append(match)
+        try:
+            response = requests.post('https://u.gg/api', headers=headers, json=json_data).json()
+            current_matches = response['data']['getProChampionMatchList']['matchList']
+            for match in current_matches:
+                matches.append(match)
+
+        except Exception as e:
+            print(f"Error getting matches: {e}")
+            return None
+        
 
     return matches
 
@@ -75,7 +81,12 @@ def get_items_count(matches, items_dict):
             all_items.append(items_dict[str(item)])
         #print()
             
-    count = dict(Counter(all_items))
+    #print(all_items)
+    remove_list = ["Berserker's Greaves", "Boots of Swiftness Boots of Swiftness", "Ionian Boots of Lucidity", "Mercury's Treads", \
+                   "Mobility Boots", "Plated Steelcaps", "Sorcerer's Shoes"]
+    result = [i for i in all_items if i not in remove_list]
+    #print(result)
+    count = dict(Counter(result))
     return {k: v for k, v in sorted(count.items(), key=lambda item: item[1], reverse=True)}
 
 def get_champion_ids_json():
